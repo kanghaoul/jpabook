@@ -20,8 +20,11 @@ public class JpaMain {
 
 
             tx.begin(); //트랜잭션 시작
-            logic(em);  //비즈니스 로직
-            tx.commit();//트랜잭션 커밋
+            //logic(em);  //비즈니스 로직
+            //logic_reg(em);
+            //logic_mod(em);
+            logic_del(em);
+            tx.commit();//트랜잭션 커밋 => INSERT SQL을 데이터베이스에 보낸다.
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,5 +61,40 @@ public class JpaMain {
         //삭제
         em.remove(member);
 
+    }
+
+    public static void logic_reg(EntityManager em) {
+        String memId1 = "MemberA";
+        Member memberA = new Member();
+        memberA.setId(memId1);
+        memberA.setUsername("하울");
+        memberA.setAge(30);
+
+        String memId2 = "MemberB";
+        Member memberB = new Member();
+        memberB.setId(memId2);
+        memberB.setUsername("정희");
+        memberB.setAge(31);
+        // 비영속 상태. 객체만 생성 된 상태이다.
+
+        em.persist(memberA);
+        em.persist(memberB);
+        // 여기 까지 영속상태 INSERT SQL을 데이터베이스에 보내지 않는다.
+    }
+
+    public static void logic_mod(EntityManager em) {
+        // 영속 엔티티 조회
+        Member memberB = em.find(Member.class, "MemberB");
+
+        System.out.println(memberB.toString());
+
+        // 영속 엔티티 데이터 수정
+        memberB.setAge(30);
+    }
+
+    public static void logic_del(EntityManager em) {
+        // 삭제 대상 영속성 엔티티 조회
+        Member memberA = em.find(Member.class, "MemberA");
+        em.remove(memberA); // 엔티티 삭제
     }
 }
